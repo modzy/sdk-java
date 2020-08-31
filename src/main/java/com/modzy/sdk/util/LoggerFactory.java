@@ -26,8 +26,8 @@ public class LoggerFactory {
 		}
 	}
 	
-	public static final Logger getLogger(Object myClass) {		
-		return Logger.getLogger(myClass.getClass().getSimpleName());
+	public static Logger getLogger(Object myClass) {
+		return Logger.getLogger(myClass.getClass().getCanonicalName());
 	}
 	
 }
