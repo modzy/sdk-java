@@ -44,8 +44,7 @@ public class JobTextInputSample {
 		// Model model = modzyClient.getModel("ed542963de");
 		// You can find more information about how to query the models on the ModelSamples.java file
 
-		// The model identifier is under the modelId key. You can take a look at the other keys by uncommenting the following line
-		// logger.info(", ".join("{} :: {}".format(key, value) for key, value in model.items()))
+		// The model identifier is under the identifier property. You can take a look at the other properties under Model class		
 		// Or just log the model identifier, and potencially the latest version
 		System.out.println(String.format("The model identifier is %s and the latest version is %s", model.getIdentifier(), model.getLatestVersion()));
 
