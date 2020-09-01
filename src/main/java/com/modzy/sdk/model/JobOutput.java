@@ -64,8 +64,8 @@ public class JobOutput<T> {
 		Map<String,String> realFailures = new HashMap<String,String>();				
 		JsonNode nodeResult;		
 		for( String resultKey : this.failures.keySet() ) {						
-			nodeResult = this.failures.get(resultKey).get("Error");
-			realFailures.put(resultKey, nodeResult.asText() );						
+			nodeResult = this.failures.get(resultKey).get("error");
+			realFailures.put(resultKey, nodeResult != null ? nodeResult.asText() : "Undefined error" );
 		}
 		return realFailures;
 	}

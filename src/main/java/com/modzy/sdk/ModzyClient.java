@@ -377,7 +377,7 @@ public class ModzyClient {
 		while( jobStatus.equals( job.getStatus() ) ) {
 			this.logger.info("["+job.getJobIdentifier()+"] "+job.getModel().getName()+": "+(100*(System.currentTimeMillis() - initime)/timeout)+"% waiting for end of "+jobStatus+" with a timeout of "+timeout+"ms" );			
 			try {				
-				Thread.sleep(Math.max( 5000, timeout/10 ) );
+				Thread.sleep(Math.max( 15000, timeout/10 ) );
 			} catch (InterruptedException ie) {
 				throw new ApiException(ie);
 			}					
@@ -462,6 +462,7 @@ public class ModzyClient {
 	 */
 	public JobOutput<JsonNode> submitJobBlockUntilComplete(Model model, ModelVersion modelVersion, JobInput<?> jobInput ) throws ApiException{
 		Job job = this.jobClient.submitJob(model, modelVersion, jobInput);
+		this.logger.info("["+job.getJobIdentifier()+"] "+model.getName()+" :: "+modelVersion.getVersion()+" :: waiting ");
 		job = this.blockUntilNotInJobStatus(job, modelVersion.getTimeout().getStatus(), JobStatus.SUBMITTED);
 		job = this.blockUntilNotInJobStatus(job, modelVersion.getTimeout().getRun(), JobStatus.IN_PROGRESS);
 		if( !job.getStatus().equals(JobStatus.COMPLETED) ) {
@@ -725,6 +726,20 @@ public class ModzyClient {
 		this.logger.info(model.getName()+": job result "+mapResult);
 		return mapResult;
 	}
-	
-		
+
+	/**
+	 *
+	 * Utility method that wait until the job status change to end state.
+	 *
+	 * @param job the job that will wait for
+	 * @param timeoutInMillis the time in miliseconds expected for a status change
+	 * @return A updated instance of the job
+	 * @throws ApiException if there is something wrong with the service or the call
+	 */
+	public Job blockUntilComplete(Job job, Long timeoutInMillis) throws ApiException{
+		timeoutInMillis = timeoutInMillis != null ? timeoutInMillis : 20000L;
+		job = this.blockUntilNotInJobStatus(job, timeoutInMillis, JobStatus.SUBMITTED);
+		job = this.blockUntilNotInJobStatus(job, timeoutInMillis, JobStatus.IN_PROGRESS);
+		return job;
+	}
 }
