@@ -1,2 +1,7 @@
-package com.modzy.sdk.dto;public class JobHistorySearchStatus {
+package com.modzy.sdk.dto;
+
+public enum JobHistorySearchStatus {
+    ALL,
+    PENDING,
+    TERMINATED
 }
