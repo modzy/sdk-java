@@ -68,17 +68,10 @@ public class JobClient {
 	 */
 	public List<Job> getJobHistory(JobHistorySearchParams searchParams) throws ApiException{
 		WebTarget webTarget = this.restTarget.path("history");
-		ObjectMapper objMapper = new ObjectMapper();		
-		Map<String, String> map = objMapper.convertValue(searchParams, new TypeReference<Map<String,String>>() {} );		
-		for( Entry<String,String> entry : map.entrySet() ) {
-			webTarget = webTarget.queryParam( entry.getKey(), entry.getValue() );					
-		}
-		if( searchParams.getJobIdentifiers() != null ) {
-			try {				
-				webTarget = webTarget.queryParam( "jobIdentifiers", objMapper.writeValueAsString( Arrays.asList( searchParams.getJobIdentifiers() ) ) );
-			} catch (JsonProcessingException jpe) {
-				throw new ApiException(jpe);
-			}
+		ObjectMapper objMapper = new ObjectMapper();
+		Map<String, String> map = objMapper.convertValue(searchParams, new TypeReference<Map<String,String>>() {} );
+		for( Map.Entry<String,String> entry : map.entrySet() ) {
+			webTarget = webTarget.queryParam( entry.getKey(), entry.getValue() );
 		}
 		Builder builder = webTarget.request(MediaType.APPLICATION_JSON);
 		builder.header("Authorization", "ApiKey "+this.apiKey);

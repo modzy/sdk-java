@@ -7,5 +7,4 @@ public enum JobStatus {
     TIMEDOUT,
     CANCELED,
     ERROR,
-    ALL,
 }

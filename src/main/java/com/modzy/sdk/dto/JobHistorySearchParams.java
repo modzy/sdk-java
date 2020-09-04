@@ -20,26 +20,25 @@ public class JobHistorySearchParams extends Pagination{
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
 	private Date endDate;
-	
-	@JsonIgnore
-	private String[] jobIdentifiers;
-	
-	private JobStatus status;
+
+	private String model;
+
+	private JobHistorySearchStatus status;
 
 	public JobHistorySearchParams() {
 		super();
-		this.status=JobStatus.ALL;
+		this.status=JobHistorySearchStatus.ALL;
 	}
 	
-	public JobHistorySearchParams(String user, String accessKey, Date startDate, Date endDate,
-			String[] jobIdentifiers, JobStatus status, Integer page, Integer perPage, 
-			String sortBy, String direction) {
+	public JobHistorySearchParams(
+			String user, String accessKey, Date startDate, Date endDate, String model, JobHistorySearchStatus status,
+			Integer page, Integer perPage, String sortBy, String direction) {
 		this();
 		this.user = user;
 		this.accessKey = accessKey;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.jobIdentifiers = jobIdentifiers;
+		this.model = model;
 		this.status = status;
 		this.page = page;
 		this.perPage = perPage;
@@ -79,19 +78,15 @@ public class JobHistorySearchParams extends Pagination{
 		this.endDate = endDate;
 	}
 
-	public String[] getJobIdentifiers() {
-		return jobIdentifiers;
-	}
+	public String getModel(){return this.model;}
 
-	public void setJobIdentifiers(String[] jobIdentifiers) {
-		this.jobIdentifiers = jobIdentifiers;
-	}
+	public void setModel(String model){ this.model = model;}
 
-	public JobStatus getStatus() {
+	public JobHistorySearchStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(JobStatus status) {
+	public void setStatus(JobHistorySearchStatus status) {
 		this.status = status;
 	}
 	

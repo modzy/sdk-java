@@ -16,6 +16,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
+import com.modzy.sdk.dto.JobHistorySearchStatus;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,7 +64,7 @@ public class TestJobClient {
 			fail(e.getMessage());
 		}
 		assertNotNull(model);
-		assertNotEquals(model.getVersions(), 0);		
+		assertNotEquals(model.getVersions().size(), 0);
 		ModelVersion modelVersion = null;
 		try {
 			modelVersion = this.modelClient.getModelVersion(model.getIdentifier(), model.getLatestVersion());
@@ -71,8 +72,8 @@ public class TestJobClient {
 			fail(e.getMessage());
 		}
 		assertNotNull(modelVersion);
-		assertNotEquals(modelVersion.getInputs(), 0);
-		assertNotEquals(modelVersion.getOutputs(), 0);
+		assertNotEquals(modelVersion.getInputs().size(), 0);
+		assertNotEquals(modelVersion.getOutputs().size(), 0);
 		//
 		Map<String,String> sourceMap = new HashMap<String,String>();
 		sourceMap.put("input.txt", "Modzy is great!");
@@ -195,8 +196,9 @@ public class TestJobClient {
 	}
 	
 	@Test
-	public void testGetJobHistory() {
+	public void testGetJobHistoryByName() {
 		JobHistorySearchParams searchParams = new JobHistorySearchParams();
+		searchParams.setUser("a");
 		List<Job> jobs = null;
 		try {
 			jobs = this.jobClient.getJobHistory(searchParams);
@@ -204,15 +206,37 @@ public class TestJobClient {
 			fail(e.getMessage());
 		}
 		assertNotNull(jobs);
-		assertNotEquals(jobs.size(), 0);		
+		assertNotEquals(jobs.size(), 0);
+		String userName;
 		for( Job job : jobs ) {
 			this.logger.info( job.toString() );
 			assertNotNull(job.getJobIdentifier() );
 			assertNotNull(job.getStatus());
-			assertNotNull(job.getModel());			
+			assertNotNull(job.getModel());
 		}
-	}		
-	
+	}
+
+	@Test
+	public void testGetJobHistoryByModel() {
+		JobHistorySearchParams searchParams = new JobHistorySearchParams();
+		//Search by model name
+		searchParams.setModel( "Sentiment Analysis" );
+		List<Job> jobs = null;
+		try {
+			jobs = this.jobClient.getJobHistory(searchParams);
+		} catch (ApiException e) {
+			fail(e.getMessage());
+		}
+		assertNotNull(jobs);
+		assertNotEquals(jobs.size(), 0);
+		for( Job job : jobs ) {
+			this.logger.info( job.toString() );
+			assertNotNull(job.getJobIdentifier() );
+			assertNotNull(job.getStatus());
+			assertNotNull(job.getModel());
+		}
+	}
+
 	@Test
 	public void testGetJobHistoryByAccessKey() {
 		JobHistorySearchParams searchParams = new JobHistorySearchParams();		
@@ -269,10 +293,9 @@ public class TestJobClient {
 	}
 
 	@Test
-	public void testGetJobHistoryByJobIdentifier() {
+	public void testGetJobHistoryByStatus() {
 		JobHistorySearchParams searchParams = new JobHistorySearchParams();
-		//Empty array
-		searchParams.setJobIdentifiers( new String[]{""} );
+		searchParams.setStatus(JobHistorySearchStatus.TERMINATED);
 		List<Job> jobs = null;
 		try {
 			jobs = this.jobClient.getJobHistory(searchParams);
@@ -280,44 +303,13 @@ public class TestJobClient {
 			fail(e.getMessage());
 		}
 		assertNotNull(jobs);
-		assertEquals(jobs.size(), 0);
-		//unexisting identifiers
-		searchParams.setJobIdentifiers( new String[]{"A", "B", "C"} );		
-		try {
-			jobs = this.jobClient.getJobHistory(searchParams);
-		} catch (ApiException e) {
-			fail(e.getMessage());
-		}
-		assertNotNull(jobs);
-		assertEquals(jobs.size(), 0);
-		//existing identifiers
-		Model model = new Model();
-		model.setIdentifier("ed542963de");
-		model.setVersion("0.0.27");		
-		//
-		Map<String,String> sourceMap = new HashMap<String,String>();
-		sourceMap.put("input.txt", "Modzy is great!");
-		JobInput<String> jobInput = new JobInputText();
-		jobInput.addSource(sourceMap);
-		Job job = new Job();
-		job.setModel(model);
-		job.setInput(jobInput);
-		try {			
-			job = this.jobClient.submitJob(job);
-			this.logger.info( job.toString() );
-		} catch (ApiException e) {
-			fail(e.getMessage());
-		}
-		assertNotNull(job);		
-		assertNotNull(job.getJobIdentifier());
-		searchParams.setJobIdentifiers( new String[]{job.getJobIdentifier()} );		
-		try {
-			jobs = this.jobClient.getJobHistory(searchParams);
-		} catch (ApiException e) {
-			fail(e.getMessage());
-		}
-		assertNotNull(jobs);
 		assertNotEquals(jobs.size(), 0);
-		
+		String userName;
+		for( Job job : jobs ) {
+			this.logger.info( job.toString() );
+			assertNotNull(job.getJobIdentifier() );
+			assertNotNull(job.getStatus());
+			assertNotNull(job.getModel());
+		}
 	}
 }
