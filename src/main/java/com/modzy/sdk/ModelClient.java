@@ -236,7 +236,7 @@ public class ModelClient {
 	 * Call the Modzy API Service that return a version object
 	 * @param modelId a valid model id
 	 * @param versionId a valid version id 
-	 * @return a ModelVersion intance with the information
+	 * @return a ModelVersion instance with the information
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
 	public ModelVersion getModelVersion(String modelId, String versionId) throws ApiException{
@@ -258,6 +258,68 @@ public class ModelClient {
 			this.logger.log(Level.SEVERE, wae.getMessage(), wae);
 			throw new ApiException(wae);
 		} 	
-	}	
+	}
+
+	/**
+	 * Call the Modzy API Service that return the sample input for a model version
+	 * @param modelId a valid model id
+	 * @param versionId a valid version id
+	 * @return a json string instance with the information
+	 * @throws ApiException if there is something wrong with the service or the call
+	 */
+	public String getModelVersionInputSample(String modelId, String versionId) throws ApiException{
+		Builder builder = this.restTarget.path(modelId)
+				.path("versions").path(versionId)
+				.path("sample-input")
+				.request(MediaType.APPLICATION_JSON);
+		builder.header("Authorization", "ApiKey "+this.apiKey);
+		try {
+			logger.info("getModelVersion("+modelId+","+versionId+") :: Ready to call modzy api");
+			return builder.get(String.class);
+		}
+		catch(ResponseProcessingException rpe) {
+			this.logger.log(Level.SEVERE, rpe.getMessage(), rpe);
+			throw new ApiException(rpe);
+		}
+		catch(ProcessingException pr) {
+			this.logger.log(Level.SEVERE, pr.getMessage(), pr);
+			throw new ApiException(pr);
+		}
+		catch(WebApplicationException wae) {
+			this.logger.log(Level.SEVERE, wae.getMessage(), wae);
+			throw new ApiException(wae);
+		}
+	}
+
+	/**
+	 * Call the Modzy API Service that return the sample output for a model version
+	 * @param modelId a valid model id
+	 * @param versionId a valid version id
+	 * @return a json string instance with the information
+	 * @throws ApiException if there is something wrong with the service or the call
+	 */
+	public String getModelVersionOutputSample(String modelId, String versionId) throws ApiException{
+		Builder builder = this.restTarget.path(modelId)
+				.path("versions").path(versionId)
+				.path("sample-output")
+				.request(MediaType.APPLICATION_JSON);
+		builder.header("Authorization", "ApiKey "+this.apiKey);
+		try {
+			logger.info("getModelVersion("+modelId+","+versionId+") :: Ready to call modzy api");
+			return builder.get(String.class);
+		}
+		catch(ResponseProcessingException rpe) {
+			this.logger.log(Level.SEVERE, rpe.getMessage(), rpe);
+			throw new ApiException(rpe);
+		}
+		catch(ProcessingException pr) {
+			this.logger.log(Level.SEVERE, pr.getMessage(), pr);
+			throw new ApiException(pr);
+		}
+		catch(WebApplicationException wae) {
+			this.logger.log(Level.SEVERE, wae.getMessage(), wae);
+			throw new ApiException(wae);
+		}
+	}
 	
 }
