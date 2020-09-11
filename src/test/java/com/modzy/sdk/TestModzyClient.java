@@ -106,7 +106,7 @@ public class TestModzyClient {
 	public void testNSFW() {		
 		//
 		Map<String,JsonNode> retValue = null;
-		InputStream is =TestModzyClient.class.getResourceAsStream("/images/image.png");
+		InputStream is =TestModzyClient.class.getResourceAsStream("/images/example_1.jpg");
 		byte[] imageBytes = null;
 		try {
 			imageBytes = IOUtils.toByteArray( is );                                        

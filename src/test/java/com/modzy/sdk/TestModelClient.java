@@ -204,4 +204,39 @@ public class TestModelClient {
 		}
 	}
 
+	@Test
+	public void testGetModelVersion() {
+		ModelVersion modelVersion = null;
+		try {
+			modelVersion = this.modelClient.getModelVersion("c60c8dbd79", "0.0.1");
+		}
+		catch(ApiException ae) {
+			fail(ae.getMessage());
+		}
+		assertNotNull(modelVersion);
+	}
+
+	@Test
+	public void testGetModelVersionInputSample() {
+		String inputSample = null;
+		try {
+			inputSample = this.modelClient.getModelVersionInputSample("c60c8dbd79", "0.0.1");
+		}
+		catch(ApiException ae) {
+			fail(ae.getMessage());
+		}
+		assertNotNull(inputSample);
+	}
+
+	@Test
+	public void testGetModelVersionOutputSample() {
+		String outputSample = null;
+		try {
+			outputSample = this.modelClient.getModelVersionOutputSample("c60c8dbd79", "0.0.1");
+		}
+		catch(ApiException ae) {
+			fail(ae.getMessage());
+		}
+		assertNotNull(outputSample);
+	}
 }
