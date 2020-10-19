@@ -65,7 +65,7 @@ public class TestModelClient {
 	public void testGetModelByName(){
 		Model model = null;
 		try {
-			model = this.modelClient.getModelByName("Sentiment Analysis");
+			model = this.modelClient.getModelByName("Military Equipment Classification");
 		}
 		catch(ApiException ae) {
 			fail(ae.getMessage());
