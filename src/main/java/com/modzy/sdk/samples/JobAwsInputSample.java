@@ -152,6 +152,9 @@ public class JobAwsInputSample {
 				}
 			}
 		}
+		else{
+			System.err.println(String.format("processing failed: %s", job));
+		}
 
 	}
 

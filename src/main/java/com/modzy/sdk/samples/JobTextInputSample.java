@@ -133,6 +133,9 @@ public class JobTextInputSample {
 				}
 			}
 		}
+		else{
+			System.err.println(String.format("processing failed: %s", job));
+		}
 	}
 
 }
