@@ -20,7 +20,9 @@ public class JobOutput<T> {
     
     private Integer failed;
     
-    private Boolean finished;
+	private Boolean finished;
+	
+	private String submittedByKey;
 
 	public String getJobIdentifier() {
 		return jobIdentifier;
@@ -104,6 +106,14 @@ public class JobOutput<T> {
 
 	public void setFinished(Boolean finished) {
 		this.finished = finished;
+	}
+
+	public String getSubmittedByKey(){
+		return submittedByKey;
+	}
+
+	public void setSubmittedByKey(String submittedByKey){
+		this.submittedByKey = submittedByKey;
 	}
 
 	@Override
