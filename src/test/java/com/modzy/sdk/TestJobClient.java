@@ -93,7 +93,7 @@ public class TestJobClient {
 	}		
 	
 	@Test
-	public void textGetJob() {
+	public void testGetJob() {
 		Model model = null;
 		try {
 			model = this.modelClient.getModel("ed542963de");//sentiment-analysis
@@ -146,7 +146,7 @@ public class TestJobClient {
 	}
 	
 	@Test
-	public void textCancelJob() {
+	public void testCancelJob() {
 		Model model = null;
 		try {
 			model = this.modelClient.getModel("ed542963de");//sentiment-analysis
@@ -201,11 +201,11 @@ public class TestJobClient {
 			} catch (ApiException e) {
 				fail(e.getMessage());
 			}
-			assertNotNull(job2);
-			assertNotNull(job2.getJobIdentifier());
-			this.logger.info("Job after cancel call "+job2.toString() );
-			assertEquals(job.getJobIdentifier(), job2.getJobIdentifier());
-			assertEquals(JobStatus.CANCELED, job2.getStatus());
+			assertNotNull(job3);
+			assertNotNull(job3.getJobIdentifier());
+			this.logger.info("Job after cancel call "+job3.toString() );
+			assertEquals(job.getJobIdentifier(), job3.getJobIdentifier());
+			assertEquals(JobStatus.CANCELED, job3.getStatus());
 		}
 	}
 	
