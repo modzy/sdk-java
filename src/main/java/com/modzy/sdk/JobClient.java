@@ -21,10 +21,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modzy.sdk.dto.JobHistorySearchParams;
 import com.modzy.sdk.exception.ApiException;
-import com.modzy.sdk.model.Job;
-import com.modzy.sdk.model.JobInput;
-import com.modzy.sdk.model.Model;
-import com.modzy.sdk.model.ModelVersion;
+import com.modzy.sdk.model.*;
 import com.modzy.sdk.util.LoggerFactory;
 
 /**
@@ -107,7 +104,9 @@ public class JobClient {
 		builder.header("Authorization", "ApiKey "+this.apiKey);
 		try {
 			logger.info("creating job: "+job);
-			return builder.post(Entity.entity(job, MediaType.APPLICATION_JSON), Job.class);
+			job = builder.post(Entity.entity(job, MediaType.APPLICATION_JSON), Job.class);
+			job.setStatus( JobStatus.SUBMITTED );
+			return job;
 		}		
 		catch(ResponseProcessingException rpe) {
 			this.logger.log(Level.SEVERE, rpe.getMessage(), rpe);

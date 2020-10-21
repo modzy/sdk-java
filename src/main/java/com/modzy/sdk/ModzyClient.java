@@ -377,7 +377,7 @@ public class ModzyClient {
 		while( jobStatus.equals( job.getStatus() ) ) {
 			this.logger.info("["+job.getJobIdentifier()+"] "+job.getModel().getName()+": "+(100*(System.currentTimeMillis() - initime)/timeout)+"% waiting for end of "+jobStatus+" with a timeout of "+timeout+"ms" );			
 			try {				
-				Thread.sleep(Math.max( 15000, timeout/10 ) );
+				Thread.sleep(Math.max( 2500, timeout/20 ) );
 			} catch (InterruptedException ie) {
 				throw new ApiException(ie);
 			}					

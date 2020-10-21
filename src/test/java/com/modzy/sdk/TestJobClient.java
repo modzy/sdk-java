@@ -90,12 +90,10 @@ public class TestJobClient {
 		this.logger.info(job.toString());
 		assertNotNull(job.getJobIdentifier());
 		assertNotNull(job.getStatus());
-		assertNotNull(job.getSubmittedAt());
-		assertNotNull(job.getSubmittedBy());		
 	}		
 	
 	@Test
-	public void textGetJob() {
+	public void testGetJob() {
 		Model model = null;
 		try {
 			model = this.modelClient.getModel("ed542963de");//sentiment-analysis
@@ -129,8 +127,11 @@ public class TestJobClient {
 		this.logger.info(job.toString());
 		assertNotNull(job.getJobIdentifier());
 		assertNotNull(job.getStatus());
-		assertNotNull(job.getSubmittedAt());
-		assertNotNull(job.getSubmittedBy());		
+		try {
+			Thread.sleep(5000l);
+		} catch (InterruptedException e) {
+			fail(e.getMessage());
+		}
 		//
 		Job job2 = null;
 		try {
@@ -145,7 +146,7 @@ public class TestJobClient {
 	}
 	
 	@Test
-	public void textCancelJob() {
+	public void testCancelJob() {
 		Model model = null;
 		try {
 			model = this.modelClient.getModel("ed542963de");//sentiment-analysis
@@ -179,20 +180,33 @@ public class TestJobClient {
 		this.logger.info(job.toString());
 		assertNotNull(job.getJobIdentifier());
 		assertNotNull(job.getStatus());
-		assertNotNull(job.getSubmittedAt());
-		assertNotNull(job.getSubmittedBy());		
+		//
+		try {
+			Thread.sleep(5000l);
+		} catch (InterruptedException e) {
+			fail(e.getMessage());
+		}
 		//
 		Job job2 = null;
 		try {
-			job2 = this.jobClient.cancelJob(job);			
+			job2 = this.jobClient.getJob(job);
 		} catch (ApiException e) {
 			fail(e.getMessage());
 		}
-		assertNotNull(job2);			
-		assertNotNull(job2.getJobIdentifier());
-		this.logger.info("Job after cancel call "+job2.toString() );
-		assertEquals(job.getJobIdentifier(), job2.getJobIdentifier());
-		assertEquals(JobStatus.CANCELED, job2.getStatus());
+		//
+		if( JobStatus.COMPLETED != job2.getStatus() ){
+			Job job3 = null;
+			try {
+				job3 = this.jobClient.cancelJob(job);
+			} catch (ApiException e) {
+				fail(e.getMessage());
+			}
+			assertNotNull(job3);
+			assertNotNull(job3.getJobIdentifier());
+			this.logger.info("Job after cancel call "+job3.toString() );
+			assertEquals(job.getJobIdentifier(), job3.getJobIdentifier());
+			assertEquals(JobStatus.CANCELED, job3.getStatus());
+		}
 	}
 	
 	@Test
