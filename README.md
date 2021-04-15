@@ -22,8 +22,6 @@
 
 Clone the repository:
 
-Globally:
-
 - `$ git clone https://github.com/modzy/sdk-java.git`
 
 Use [maven](https://maven.apache.org/) to install the SDK.
