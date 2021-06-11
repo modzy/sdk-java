@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Data;
+import lombok.ToString;
 
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME, 
@@ -28,20 +30,20 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  *
  * @param <T> 
  */
+@Data
+@ToString
 public class JobInput<T> {
-	
-	protected Map<String,Map<String,T>> sources;
+
+	protected Map<String,Map<String,T>> sources = new HashMap<String, Map<String,T>>();
 	
 	@JsonIgnore
 	protected ModelVersion modelVersion;
 	
 	public JobInput() {
-		super();	
-		this.sources = new HashMap<String, Map<String,T>>();
+		super();
 	}
 	
 	public JobInput(ModelVersion modelVersion) {
-		this();	
 		this.modelVersion = modelVersion;
 	}	
 	
@@ -108,27 +110,6 @@ public class JobInput<T> {
 	 */
 	public void addSource(Map<String,T> sourceMap) {
 		this.addSource(null, sourceMap);
-	}
-	
-	public Map<String, Map<String, T>> getSources() {
-		return sources;
-	}
-
-	public void setSources(Map<String, Map<String, T>> sources) {
-		this.sources = sources;
-	}
-	
-	public ModelVersion getModelVersion() {
-		return modelVersion;
-	}
-
-	public void setModelVersion(ModelVersion modelVersion) {
-		this.modelVersion = modelVersion;
-	}
-
-	@Override
-	public String toString() {
-		return "JobInput [type=" + this.getClass().getSimpleName() + ", sources=" + sources + "]";
 	}
 	
 }

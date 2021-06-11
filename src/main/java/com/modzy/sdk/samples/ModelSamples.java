@@ -107,7 +107,7 @@ public class ModelSamples {
 				)
 		);
 		// Finally, you can find the models related with this search
-		models = modzyClient.getRelatedModels(model.getModelId());
+		models = modzyClient.getRelatedModels(model.getIdentifier());
 		System.out.println("Related models");
 		for( Model modelAux : models ){
 			System.out.println(

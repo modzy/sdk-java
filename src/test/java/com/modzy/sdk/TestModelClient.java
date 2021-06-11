@@ -55,7 +55,7 @@ public class TestModelClient {
 		assertNotEquals(models.size(), 0);
 		for( Model model : models ) {
 			this.logger.info( model.toString() );
-			assertNotNull(model.getModelId());
+			assertNotNull(model.getIdentifier());
 			assertNotNull(model.getLatestVersion());
 			assertNotNull(model.getVersions());
 		}
@@ -72,7 +72,7 @@ public class TestModelClient {
 		}
 		assertNotNull(model);
 		this.logger.info( model.toString() );
-		assertNotNull(model.getModelId());
+		assertNotNull(model.getIdentifier());
 		assertNotNull(model.getName());
 		assertNotNull(model.getDescription());
 		assertNotNull(model.getAuthor());
@@ -89,7 +89,7 @@ public class TestModelClient {
 		}
 		assertNotNull(model);
 		this.logger.info( model.toString() );
-		assertNotNull(model.getModelId());
+		assertNotNull(model.getIdentifier());
 		assertNotNull(model.getName());
 		assertNotNull(model.getDescription());
 		assertNotNull(model.getAuthor());
@@ -108,7 +108,7 @@ public class TestModelClient {
 		assertNotEquals(models.size(), 0);
 		this.logger.info( models.toString() );
 		for( Model model : models ) {
-			assertNotNull(model.getModelId());
+			assertNotNull(model.getIdentifier());
 			assertNotNull(model.getName());
 			assertNotNull(model.getAuthor());
 		}
@@ -124,7 +124,7 @@ public class TestModelClient {
 			fail(ae.getMessage());
 		}
 		assertNotNull(saModel);
-		assertNotNull(saModel.getModelId());
+		assertNotNull(saModel.getIdentifier());
 		this.logger.info( saModel.toString() );
 		List<Model> models = null;
 		try {
@@ -137,7 +137,7 @@ public class TestModelClient {
 		assertNotEquals(models.size(), 0);
 		this.logger.info( models.toString() );
 		for( Model model : models ) {
-			assertNotNull(model.getModelId());
+			assertNotNull(model.getIdentifier());
 			assertNotNull(model.getName());
 			assertNotNull(model.getAuthor());
 		}
@@ -179,7 +179,7 @@ public class TestModelClient {
 			fail(ae.getMessage());
 		}
 		assertNotNull(saModel);
-		assertNotNull(saModel.getModelId());
+		assertNotNull(saModel.getIdentifier());
 		this.logger.info( saModel.toString() );
 		List<ModelVersion> modelVersions = null;
 		try {

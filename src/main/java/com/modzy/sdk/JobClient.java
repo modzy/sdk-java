@@ -145,7 +145,7 @@ public class JobClient {
 	 */
 	public Job submitJob(String modelId, String modelVersionId, JobInput<?> jobInput) throws ApiException{
 		Model model = new Model();
-		model.setModelId(modelId);
+		model.setIdentifier(modelId);
 		ModelVersion modelVersion = new ModelVersion();
 		modelVersion.setVersion(modelVersionId);
 		return this.submitJob( new Job(model, modelVersion, jobInput) );

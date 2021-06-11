@@ -4,8 +4,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Data;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class JobOutput<T> {
 
 	private String jobIdentifier;    
@@ -29,14 +33,6 @@ public class JobOutput<T> {
 	private Team team;
 
 	private Boolean explained;
-
-	public String getJobIdentifier() {
-		return jobIdentifier;
-	}
-
-	public void setJobIdentifier(String jobIdentifier) {
-		this.jobIdentifier = jobIdentifier;
-	}
 
 	/**
 	 * Getter of the results with a fix to avoid the double nesting
@@ -64,10 +60,6 @@ public class JobOutput<T> {
 		return realResult;
 	}
 
-	public void setResults(Map<String,JsonNode> results) {
-		this.results = results;
-	}
-
 	public Map<String, String> getFailures() {
 		Map<String,String> realFailures = new HashMap<String,String>();				
 		JsonNode nodeResult;		
@@ -76,81 +68,6 @@ public class JobOutput<T> {
 			realFailures.put(resultKey, nodeResult != null ? nodeResult.asText() : "Undefined error" );
 		}
 		return realFailures;
-	}
-
-	public void setFailures(Map<String,JsonNode> failures) {
-		this.failures = failures;
-	}
-
-	public Integer getTotal() {
-		return total;
-	}
-
-	public void setTotal(Integer total) {
-		this.total = total;
-	}
-
-	public Integer getCompleted() {
-		return completed;
-	}
-
-	public void setCompleted(Integer completed) {
-		this.completed = completed;
-	}
-
-	public Integer getFailed() {
-		return failed;
-	}
-
-	public void setFailed(Integer failed) {
-		this.failed = failed;
-	}
-
-	public Boolean getFinished() {
-		return finished;
-	}
-
-	public void setFinished(Boolean finished) {
-		this.finished = finished;
-	}
-
-	public String getSubmittedByKey(){
-		return submittedByKey;
-	}
-
-	public void setSubmittedByKey(String submittedByKey){
-		this.submittedByKey = submittedByKey;
-	}
-
-	public String getAccountIdentifier() {
-		return accountIdentifier;
-	}
-
-	public void setAccountIdentifier(String accountIdentifier) {
-		this.accountIdentifier = accountIdentifier;
-	}
-
-	public Team getTeam() {
-		return team;
-	}
-
-	public void setTeam(Team team) {
-		this.team = team;
-	}
-
-	public Boolean getExplained() {
-		return explained;
-	}
-
-	public void setExplained(Boolean explained) {
-		this.explained = explained;
-	}
-
-	@Override
-	public String toString() {
-		return "JobOutput [jobIdentifier=" + jobIdentifier + ", results=" + results + ", failures=" + failures
-				+ ", total=" + total + ", completed=" + completed + ", failed=" + failed + ", finished=" + finished
-				+ "]";
 	}
     
 
