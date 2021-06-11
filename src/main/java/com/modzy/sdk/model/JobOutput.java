@@ -24,6 +24,12 @@ public class JobOutput<T> {
 	
 	private String submittedByKey;
 
+	private String accountIdentifier;
+
+	private Team team;
+
+	private Boolean explained;
+
 	public String getJobIdentifier() {
 		return jobIdentifier;
 	}
@@ -114,6 +120,30 @@ public class JobOutput<T> {
 
 	public void setSubmittedByKey(String submittedByKey){
 		this.submittedByKey = submittedByKey;
+	}
+
+	public String getAccountIdentifier() {
+		return accountIdentifier;
+	}
+
+	public void setAccountIdentifier(String accountIdentifier) {
+		this.accountIdentifier = accountIdentifier;
+	}
+
+	public Team getTeam() {
+		return team;
+	}
+
+	public void setTeam(Team team) {
+		this.team = team;
+	}
+
+	public Boolean getExplained() {
+		return explained;
+	}
+
+	public void setExplained(Boolean explained) {
+		this.explained = explained;
 	}
 
 	@Override

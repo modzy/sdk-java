@@ -2,6 +2,7 @@ package com.modzy.sdk.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -54,19 +55,19 @@ public class JobInput<T> {
 	 * @param sourceName Name of the input, if its null it will be generated
 	 * @param sources Sequence if source inputs according to the model version specification
 	 */
-	public void addSourceByName(String sourceName, T ...sources) {
+	public void addSourceByName(String sourceName, List<T> sources) {
 		if( sources == null ) {
 			return;
 		} 		
 		if( this.modelVersion == null ) {
 			throw new UnsupportedOperationException("This "+this.getClass().getSimpleName()+" instance should be intializated with the model version");
 		}
-		if( sources.length != this.modelVersion.getInputs().size() ) {
-			throw new IllegalArgumentException("The number of sources provided "+sources.length+" doesn't match the model input size of "+this.modelVersion.getInputs().size() );
+		if( sources.size() != this.modelVersion.getInputs().size() ) {
+			throw new IllegalArgumentException("The number of sources provided "+sources.size()+" doesn't match the model input size of "+this.modelVersion.getInputs().size() );
 		}
 		Map<String,T> sourceMap = new HashMap<String,T>();
-		for( int i = 0; i < sources.length; i++ ){
-			sourceMap.put(this.modelVersion.getInputs().get(i).getName(), sources[i]);			
+		for( int i = 0; i < sources.size(); i++ ){
+			sourceMap.put(this.modelVersion.getInputs().get(i).getName(), sources.get(i));
 		}
 		this.addSource(sourceName, sourceMap);				
 	}
@@ -79,7 +80,7 @@ public class JobInput<T> {
 	 * 
 	 * @param sources Sequence if source inputs according to the model version specification
 	 */
-	public void addSource(T ...sources) {
+	public void addSource(List<T> sources) {
 		this.addSourceByName(null, sources);
 	}
 	

@@ -1,5 +1,6 @@
 package com.modzy.sdk;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -192,11 +193,11 @@ public class ModzyClient {
 	 * the inputs of the specific version of the model.
 	 * 
 	 * @param modelId the model id string
-	 * @param textSource the source(s) of the model 
+	 * @param textSource the source of the model
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJobText(String modelId, String ...textSource) throws ApiException{
+	public Job submitJobText(String modelId, List<String> textSource) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());
 		JobInput<String> jobInput = new JobInputText(modelVersion);		
@@ -216,7 +217,7 @@ public class ModzyClient {
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJobText(String modelId, String versionId, String ...textSource) throws ApiException{
+	public Job submitJobText(String modelId, String versionId, List<String> textSource) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<String> jobInput = new JobInputText(modelVersion);		
@@ -235,7 +236,7 @@ public class ModzyClient {
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJobEmbedded(String modelId, EmbeddedData ...embeddedSource) throws ApiException{
+	public Job submitJobEmbedded(String modelId, List<EmbeddedData> embeddedSource) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());			
 		JobInput<EmbeddedData> jobInput = new JobInputEmbedded(modelVersion);		
@@ -255,7 +256,7 @@ public class ModzyClient {
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJobEmbedded(String modelId, String versionId, EmbeddedData ...embeddedSource) throws ApiException{
+	public Job submitJobEmbedded(String modelId, String versionId, List<EmbeddedData> embeddedSource) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<EmbeddedData> jobInput = new JobInputEmbedded(modelVersion);		
@@ -277,7 +278,7 @@ public class ModzyClient {
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJobAWSS3(String modelId, String accessKeyID, String secretAccessKey, String region, S3FileRef ...s3FileRefSource ) throws ApiException{
+	public Job submitJobAWSS3(String modelId, String accessKeyID, String secretAccessKey, String region, List<S3FileRef> s3FileRefSource ) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());			
 		JobInput<S3FileRef> jobInput = new JobInputS3(modelVersion, accessKeyID, secretAccessKey, region);		
@@ -300,7 +301,7 @@ public class ModzyClient {
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJobAWSS3(String modelId, String versionId, String accessKeyID, String secretAccessKey, String region, S3FileRef ...s3FileRefSource ) throws ApiException{
+	public Job submitJobAWSS3(String modelId, String versionId, String accessKeyID, String secretAccessKey, String region, List<S3FileRef> s3FileRefSource ) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<S3FileRef> jobInput = new JobInputS3(modelVersion, accessKeyID, secretAccessKey, region);		
@@ -488,7 +489,7 @@ public class ModzyClient {
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());
 		JobInput<String> jobInput = new JobInputText(modelVersion);		
-		jobInput.addSource(textSource);
+		jobInput.addSource(Arrays.asList(textSource));
 		JobOutput<JsonNode> jobOutput = this.submitJobBlockUntilComplete(model, modelVersion, jobInput);
 		Map<String,JsonNode> mapResult = null;
 		for( String resultsKey : jobOutput.getResults().keySet() ) {
@@ -514,7 +515,7 @@ public class ModzyClient {
 	 * @return A mapped response of the model
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */	
-	public Map<String,JsonNode> submitJobTextBlockUntilComplete(String modelId, String versionId, String ...textSource) throws ApiException {
+	public Map<String,JsonNode> submitJobTextBlockUntilComplete(String modelId, String versionId, List<String> textSource) throws ApiException {
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);
 		JobInput<String> jobInput = new JobInputText(modelVersion);		
@@ -543,7 +544,7 @@ public class ModzyClient {
 	 * @return A mapped response of the model
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Map<String,JsonNode> submitJobEmbeddedBlockUntilComplete(String modelId, EmbeddedData ...embeddedSource) throws ApiException{
+	public Map<String,JsonNode> submitJobEmbeddedBlockUntilComplete(String modelId, List<EmbeddedData> embeddedSource) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());			
 		JobInput<EmbeddedData> jobInput = new JobInputEmbedded(modelVersion);		
@@ -573,7 +574,7 @@ public class ModzyClient {
 	 * @return A mapped response of the model
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Map<String,JsonNode> submitJobEmbeddedBlockUntilComplete(String modelId, String versionId, EmbeddedData ...embeddedSource) throws ApiException{
+	public Map<String,JsonNode> submitJobEmbeddedBlockUntilComplete(String modelId, String versionId, List<EmbeddedData> embeddedSource) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<EmbeddedData> jobInput = new JobInputEmbedded(modelVersion);		
@@ -605,7 +606,7 @@ public class ModzyClient {
 	 * @return A mapped response of the model
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Map<String,JsonNode> submitJobAWSS3BlockUntilComplete(String modelId, String accessKeyID, String secretAccessKey, String region, S3FileRef ...s3FileRefSource ) throws ApiException{
+	public Map<String,JsonNode> submitJobAWSS3BlockUntilComplete(String modelId, String accessKeyID, String secretAccessKey, String region, List<S3FileRef> s3FileRefSource ) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());			
 		JobInput<S3FileRef> jobInput = new JobInputS3(modelVersion, accessKeyID, secretAccessKey, region);		
@@ -638,7 +639,7 @@ public class ModzyClient {
 	 * @return A mapped response of the model
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Map<String,JsonNode> submitJobAWSS3BlockUntilComplete(String modelId, String versionId, String accessKeyID, String secretAccessKey, String region, S3FileRef ...s3FileRefSource ) throws ApiException{
+	public Map<String,JsonNode> submitJobAWSS3BlockUntilComplete(String modelId, String versionId, String accessKeyID, String secretAccessKey, String region, List<S3FileRef> s3FileRefSource ) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<S3FileRef> jobInput = new JobInputS3(modelVersion, accessKeyID, secretAccessKey, region);		
