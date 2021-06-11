@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -116,7 +117,7 @@ public class TestModzyClient {
 		}
 		assertNotNull(imageBytes);
 		try {
-			retValue = this.modzyClient.submitJobEmbeddedBlockUntilComplete("e3f73163d3", new EmbeddedData(imageBytes));
+			retValue = this.modzyClient.submitJobEmbeddedBlockUntilComplete("e3f73163d3", Arrays.asList(new EmbeddedData(imageBytes)));
 		} catch (ApiException e) {
 			this.logger.log(Level.SEVERE, e.getMessage(), e);
 			fail(e.getMessage());
