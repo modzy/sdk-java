@@ -52,7 +52,7 @@ public class JobAwsInputSample {
 		// Get the model version object:
 		// If you already know the model version and the input key(s) of the model version you can skip this step. Also, you can
 		// use the following code block to know about the inputs keys, and skip the call on future job submissions.
-		ModelVersion modelVersion = modzyClient.getModelVersion(model.getModelId(), model.getLatestVersion() );
+		ModelVersion modelVersion = modzyClient.getModelVersion(model.getIdentifier(), model.getLatestVersion() );
 		// The info stored in modelVersion provides insights about the amount of time that the model can spend processing,
 		// the inputs, and output keys of the model.
 		System.out.println(String.format("The model version is %s", modelVersion));

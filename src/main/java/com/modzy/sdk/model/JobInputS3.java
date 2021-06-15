@@ -1,7 +1,9 @@
 package com.modzy.sdk.model;
 
 import com.modzy.sdk.dto.S3FileRef;
+import lombok.Data;
 
+@Data
 public class JobInputS3 extends JobInput<S3FileRef>{
 	
 	private String accessKeyID;
@@ -31,29 +33,5 @@ public class JobInputS3 extends JobInput<S3FileRef>{
 		this.secretAccessKey = secretAccessKey;
 		this.region = region;
 	}
-
-	public String getAccessKeyID() {
-		return accessKeyID;
-	}
-
-	public void setAccessKeyID(String accessKeyID) {
-		this.accessKeyID = accessKeyID;
-	}
-
-	public String getSecretAccessKey() {
-		return secretAccessKey;
-	}
-
-	public void setSecretAccessKey(String secretAccessKey) {
-		this.secretAccessKey = secretAccessKey;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public void setRegion(String region) {
-		this.region = region;
-	}	
 	
 }

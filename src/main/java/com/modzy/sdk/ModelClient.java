@@ -149,7 +149,7 @@ public class ModelClient {
 		searchParams.setName(modelName);
 		List<Model> models = this.getModels(searchParams);
 		if( models != null && !models.isEmpty() ){
-			return this.getModel(models.get(0).getModelId());
+			return this.getModel(models.get(0).getIdentifier());
 		}
 		throw new ApiException("Model "+modelName+" not found");
 	}
@@ -192,7 +192,7 @@ public class ModelClient {
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
 	public List<Model> getRelatedModels(Model model) throws ApiException{
-		return this.getRelatedModels(model.getModelId());
+		return this.getRelatedModels(model.getIdentifier());
 	}		
 	
 	/**
@@ -229,7 +229,7 @@ public class ModelClient {
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
 	public List<ModelVersion> getModelVersions(Model model) throws ApiException{
-		return this.getModelVersions(model.getModelId());
+		return this.getModelVersions(model.getIdentifier());
 	}
 	
 	/**
