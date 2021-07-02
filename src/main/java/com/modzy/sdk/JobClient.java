@@ -1,9 +1,8 @@
 package com.modzy.sdk;
 
-import java.util.Arrays;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,14 +14,23 @@ import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modzy.sdk.dto.JobHistorySearchParams;
 import com.modzy.sdk.exception.ApiException;
-import com.modzy.sdk.model.*;
+import com.modzy.sdk.model.Job;
+import com.modzy.sdk.model.JobInput;
+import com.modzy.sdk.model.JobInputStream;
+import com.modzy.sdk.model.JobStatus;
+import com.modzy.sdk.model.Model;
+import com.modzy.sdk.model.ModelVersion;
+import org.glassfish.jersey.media.multipart.MultiPart;
 import com.modzy.sdk.util.LoggerFactory;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 /**
  * 
@@ -100,6 +108,9 @@ public class JobClient {
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
 	public Job submitJob(Job job) throws ApiException{
+		if( job.getInput() != null && job.getInput() instanceof JobInputStream){
+			return submitOpenJob(job);
+		}
 		Builder builder = this.restTarget.request(MediaType.APPLICATION_JSON);		
 		builder.header("Authorization", "ApiKey "+this.apiKey);
 		try {
@@ -107,16 +118,84 @@ public class JobClient {
 			job = builder.post(Entity.entity(job, MediaType.APPLICATION_JSON), Job.class);
 			job.setStatus( JobStatus.SUBMITTED );
 			return job;
-		}		
-		catch(ResponseProcessingException rpe) {
+		}  catch(ResponseProcessingException rpe) {
 			this.logger.log(Level.SEVERE, rpe.getMessage(), rpe);
 			throw new ApiException(rpe);			
-		}
-		catch(ProcessingException pr) {
+		} catch(ProcessingException pr) {
 			this.logger.log(Level.SEVERE, pr.getMessage(), pr);
 			throw new ApiException(pr);
 		}
-		
+	}
+
+	/**
+	 * Call the Modzy API Services that post an open job and return it's final instance
+	 *
+	 * @param job
+	 * @return
+	 * @throws ApiException
+	 */
+	private Job submitOpenJob(Job job) throws ApiException{
+		//Open the job
+		Job openJob = this.submitJob(new Job(job.getModel()));
+		//Iterate and submit the inputs
+		try {
+			JobInput<InputStream> jobInput = (JobInput<InputStream>) job.getInput();
+			for (Map.Entry<String, Map<String, InputStream>> inputItem : jobInput.getSources().entrySet()) {
+				for (Map.Entry<String, InputStream> dataItem : inputItem.getValue().entrySet()) {
+					appendInput(openJob, inputItem.getKey(), dataItem.getKey(), dataItem.getValue());
+				}
+			}
+		} catch( ApiException ae ){
+			this.logger.log(Level.SEVERE, ae.getMessage(), ae);
+			try{
+				this.cancelJob(openJob);
+			} catch( ApiException e2 ){
+				this.logger.log(Level.WARNING, "Unpexpected exception trying to cancel the job", e2);
+			}
+			throw ae;
+		}
+		//Close the job
+		return this.closeJob(openJob);
+	}
+
+	private void appendInput(Job job, String inputItemKey, String dataItemKey, InputStream value) throws ApiException{
+		Builder builder = this.restTarget
+				.register(MultiPartFeature.class)
+				.path(job.getJobIdentifier()).path(inputItemKey).path(dataItemKey)
+				.request(MediaType.MULTIPART_FORM_DATA);
+		builder.header("Authorization", "ApiKey "+this.apiKey);
+		MultiPart data = new MultiPart();
+		data.bodyPart( new StreamDataBodyPart("input", value, dataItemKey) );
+		try {
+			logger.info("Adding input: "+job.getJobIdentifier()+" "+inputItemKey+" "+dataItemKey);
+			Response response = builder.post(Entity.entity(data, data.getMediaType()));
+			if( response.getStatus() >= 400 ){
+				throw new ApiException("The server respond with a status "+response.getStatus());
+			}
+		}  catch(ResponseProcessingException rpe) {
+			this.logger.log(Level.SEVERE, rpe.getMessage(), rpe);
+			throw new ApiException(rpe);
+		} catch(ProcessingException pr) {
+			this.logger.log(Level.SEVERE, pr.getMessage(), pr);
+			throw new ApiException(pr);
+		}
+	}
+
+	private Job closeJob(Job job) throws ApiException{
+		Builder builder = this.restTarget.path(job.getJobIdentifier()).path("close").request(MediaType.APPLICATION_JSON);
+		builder.header("Authorization", "ApiKey "+this.apiKey);
+		try {
+			logger.info("closing job: "+job);
+			job = builder.post(Entity.entity(null, MediaType.APPLICATION_JSON), Job.class);
+			job.setStatus( JobStatus.SUBMITTED );
+			return job;
+		}  catch(ResponseProcessingException rpe) {
+			this.logger.log(Level.SEVERE, rpe.getMessage(), rpe);
+			throw new ApiException(rpe);
+		} catch(ProcessingException pr) {
+			this.logger.log(Level.SEVERE, pr.getMessage(), pr);
+			throw new ApiException(pr);
+		}
 	}
 	
 	/**
@@ -129,7 +208,7 @@ public class JobClient {
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJob(Model model, ModelVersion modelVersion, JobInput<?> jobInput) throws ApiException{		
+	public Job submitJob(Model model, ModelVersion modelVersion, JobInput<?> jobInput) throws ApiException{
 		return this.submitJob( new Job(model, modelVersion, jobInput) );
 	}	
 	
