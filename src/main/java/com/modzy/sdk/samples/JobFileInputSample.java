@@ -38,7 +38,7 @@ public class JobFileInputSample {
         // The MODZY_BASE_URL should point to the API services route, it may be different from the Modzy page URL.
         // (ie: https://modzy.example.com/api).
         String baseURL = dotenv.get("MODZY_BASE_URL");
-        // The MODZY_API_KEY is your own personal API key. It is composed by a public part, a dot character and a private part
+        // The MODZY_API_KEY is your own personal API key. It is composed by a public part, a dot character, and a private part
         // (ie: AzQBJ3h4B1z60xNmhAJF.uQyQh8putLIRDi1nOldh).
         String apiKey  = dotenv.get("MODZY_API_KEY");
 
