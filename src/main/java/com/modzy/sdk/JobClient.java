@@ -1,5 +1,8 @@
 package com.modzy.sdk;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +30,7 @@ import com.modzy.sdk.model.JobInputStream;
 import com.modzy.sdk.model.JobStatus;
 import com.modzy.sdk.model.Model;
 import com.modzy.sdk.model.ModelVersion;
+import com.modzy.sdk.util.DataSize;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import com.modzy.sdk.util.LoggerFactory;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -137,12 +141,21 @@ public class JobClient {
 	private Job submitOpenJob(Job job) throws ApiException{
 		//Open the job
 		Job openJob = this.submitJob(new Job(job.getModel()));
+		//
+		int chunkSize = 1024*1024;
+		try{
+			Map<String,String> features = this.getFeatures();
+			DataSize dataSize = new DataSize(features.get("inputChunkMaximumSize"));
+			chunkSize = dataSize.getBytes().intValue();
+		} catch(ApiException ae){
+			this.logger.log(Level.WARNING, "Unexpected exception parsing the features, asuming defaults", ae);
+		}
 		//Iterate and submit the inputs
 		try {
 			JobInput<InputStream> jobInput = (JobInput<InputStream>) job.getInput();
 			for (Map.Entry<String, Map<String, InputStream>> inputItem : jobInput.getSources().entrySet()) {
 				for (Map.Entry<String, InputStream> dataItem : inputItem.getValue().entrySet()) {
-					appendInput(openJob, inputItem.getKey(), dataItem.getKey(), dataItem.getValue());
+					appendInput(openJob, inputItem.getKey(), dataItem.getKey(), dataItem.getValue(), chunkSize);
 				}
 			}
 		} catch( ApiException ae ){
@@ -150,7 +163,7 @@ public class JobClient {
 			try{
 				this.cancelJob(openJob);
 			} catch( ApiException e2 ){
-				this.logger.log(Level.WARNING, "Unpexpected exception trying to cancel the job", e2);
+				this.logger.log(Level.WARNING, "Unexpected exception trying to cancel the job", e2);
 			}
 			throw ae;
 		}
@@ -158,19 +171,24 @@ public class JobClient {
 		return this.closeJob(openJob);
 	}
 
-	private void appendInput(Job job, String inputItemKey, String dataItemKey, InputStream value) throws ApiException{
+	private void appendInput(Job job, String inputItemKey, String dataItemKey, InputStream inputValue, int chunkSize) throws ApiException{
 		Builder builder = this.restTarget
 				.register(MultiPartFeature.class)
 				.path(job.getJobIdentifier()).path(inputItemKey).path(dataItemKey)
 				.request(MediaType.MULTIPART_FORM_DATA);
 		builder.header("Authorization", "ApiKey "+this.apiKey);
 		MultiPart data = new MultiPart();
-		data.bodyPart( new StreamDataBodyPart("input", value, dataItemKey) );
+		byte inputBuffer[] = new byte[chunkSize];
+		int chunkByteCount;
 		try {
-			logger.info("Adding input: "+job.getJobIdentifier()+" "+inputItemKey+" "+dataItemKey);
-			Response response = builder.post(Entity.entity(data, data.getMediaType()));
-			if( response.getStatus() >= 400 ){
-				throw new ApiException("The server respond with a status "+response.getStatus());
+			BufferedInputStream bis = new BufferedInputStream(inputValue, chunkSize);
+			while( (chunkByteCount = bis.read(inputBuffer)) != -1 ){
+				logger.info("Adding input: "+job.getJobIdentifier()+" "+inputItemKey+" "+dataItemKey);
+				data.bodyPart( new StreamDataBodyPart("input", new ByteArrayInputStream(inputBuffer, 0, chunkByteCount), dataItemKey) );
+				Response response = builder.post(Entity.entity(data, data.getMediaType()));
+				if( response.getStatus() >= 400 ){
+					throw new ApiException("The server respond with a status "+response.getStatus());
+				}
 			}
 		}  catch(ResponseProcessingException rpe) {
 			this.logger.log(Level.SEVERE, rpe.getMessage(), rpe);
@@ -178,6 +196,9 @@ public class JobClient {
 		} catch(ProcessingException pr) {
 			this.logger.log(Level.SEVERE, pr.getMessage(), pr);
 			throw new ApiException(pr);
+		} catch (IOException ioe) {
+			this.logger.log(Level.SEVERE, ioe.getMessage(), ioe);
+			throw new ApiException("Error reading the input provided ["+inputItemKey+"/"+dataItemKey+"]", ioe);
 		}
 	}
 
@@ -313,6 +334,26 @@ public class JobClient {
 		this.logger.info("canceling job "+job);
 		return this.cancelJob(job.getJobIdentifier());
 	}		
-	
+
+
+	public Map<String,String> getFeatures() throws ApiException{
+		Builder builder = this.restTarget.path("features").request(MediaType.APPLICATION_JSON);
+		builder.header("Authorization", "ApiKey "+this.apiKey);
+		try {
+			return builder.get(Map.class);
+		}
+		catch(ResponseProcessingException rpe) {
+			this.logger.log(Level.SEVERE, rpe.getMessage(), rpe);
+			throw new ApiException(rpe);
+		}
+		catch(ProcessingException pr) {
+			this.logger.log(Level.SEVERE, pr.getMessage(), pr);
+			throw new ApiException(pr);
+		}
+		catch(WebApplicationException wae) {
+			this.logger.log(Level.SEVERE, wae.getMessage(), wae);
+			throw new ApiException(wae);
+		}
+	}
 	
 }
