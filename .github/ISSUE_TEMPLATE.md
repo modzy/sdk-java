@@ -10,7 +10,7 @@ Please review first that the issue is fully related with this SDK by checking th
 
 ### Info
 
-* Java SDK version:
+* Modzy SDK version:
 * Java version:
 * Operating System:
 
