@@ -22,6 +22,8 @@ public class Job {
 	@ToString.Include
     private Model model;
 
+	private Boolean explain;
+
 	@ToString.Include
     private JobStatus status;
 
@@ -62,6 +64,11 @@ public class Job {
     public Job(Model model, ModelVersion modelVersion, JobInput<?> input) {
     	this(model, modelVersion);
     	this.input = input;     	
+    }
+
+    public Job(Model model, ModelVersion modelVersion, JobInput<?> input, Boolean explain) {
+        this(model, modelVersion, input);
+        this.explain = explain;
     }
 	
 }

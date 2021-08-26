@@ -178,10 +178,10 @@ public class ModzyClient {
 	}
 	
 	/**
-	 * @see JobClient#submitJob(Model, ModelVersion, JobInput) 
+	 * @see JobClient#submitJob(Model, ModelVersion, JobInput, explain)
 	 */
-	public Job submitJob(Model model, ModelVersion modelVersion, JobInput<?> jobInput) throws ApiException{
-		return this.jobClient.submitJob(model, modelVersion, jobInput);
+	public Job submitJob(Model model, ModelVersion modelVersion, JobInput<?> jobInput, Boolean explain) throws ApiException{
+		return this.jobClient.submitJob(model, modelVersion, jobInput, explain);
 	}
 	
 	
@@ -202,7 +202,7 @@ public class ModzyClient {
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());
 		JobInput<String> jobInput = new JobInputText(modelVersion);		
 		jobInput.addSource(textSource);
-		return this.submitJob(model, modelVersion, jobInput);
+		return this.submitJob(model, modelVersion, jobInput, false);
 	} 
 	
 	/**
@@ -222,7 +222,7 @@ public class ModzyClient {
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<String> jobInput = new JobInputText(modelVersion);		
 		jobInput.addSource(textSource);
-		return this.submitJob(model, modelVersion, jobInput);
+		return this.submitJob(model, modelVersion, jobInput, false);
 	}
 	
 	/**
@@ -241,7 +241,7 @@ public class ModzyClient {
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());			
 		JobInput<EmbeddedData> jobInput = new JobInputEmbedded(modelVersion);		
 		jobInput.addSource(embeddedSource);
-		return this.submitJob(model, modelVersion, jobInput);
+		return this.submitJob(model, modelVersion, jobInput, false);
 	}
 	
 	/**
@@ -261,7 +261,7 @@ public class ModzyClient {
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<EmbeddedData> jobInput = new JobInputEmbedded(modelVersion);		
 		jobInput.addSource(embeddedSource);
-		return this.submitJob(model, modelVersion, jobInput);
+		return this.submitJob(model, modelVersion, jobInput, false);
 	}
 	
 	/**
@@ -283,7 +283,7 @@ public class ModzyClient {
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());			
 		JobInput<S3FileRef> jobInput = new JobInputS3(modelVersion, accessKeyID, secretAccessKey, region);		
 		jobInput.addSource( s3FileRefSource );
-		return this.submitJob(model, modelVersion, jobInput);
+		return this.submitJob(model, modelVersion, jobInput, false);
 	}
 	
 	/**
@@ -306,7 +306,7 @@ public class ModzyClient {
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<S3FileRef> jobInput = new JobInputS3(modelVersion, accessKeyID, secretAccessKey, region);		
 		jobInput.addSource( s3FileRefSource );
-		return this.submitJob(model, modelVersion, jobInput);
+		return this.submitJob(model, modelVersion, jobInput, false);
 	}
 	
 	/**
@@ -330,7 +330,7 @@ public class ModzyClient {
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());			
 		JobInput<String> jobInput = new JobInputJDBC(url, username, password, driver, query);				
-		return this.submitJob(model, modelVersion, jobInput);
+		return this.submitJob(model, modelVersion, jobInput, false);
 	}
 	
 	/**
@@ -355,7 +355,7 @@ public class ModzyClient {
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);			
 		JobInput<String> jobInput = new JobInputJDBC(url, username, password, driver, query);		
-		return this.submitJob(model, modelVersion, jobInput);
+		return this.submitJob(model, modelVersion, jobInput, false);
 	}
 	
 	/**
@@ -440,7 +440,7 @@ public class ModzyClient {
 	 * @throws ApiException if there is something wrong with the services or the call
 	 */
 	public JobOutput<JsonNode> submitJobBlockUntilComplete(String modelId, String modelVersionId, JobInput<?> jobInput ) throws ApiException{
-		Job job = this.jobClient.submitJob(modelId, modelVersionId, jobInput);
+		Job job = this.jobClient.submitJob(modelId, modelVersionId, jobInput, false);
 		job = this.blockUntilNotInJobStatus(job, 20000, JobStatus.SUBMITTED);
 		job = this.blockUntilNotInJobStatus(job, 30000, JobStatus.IN_PROGRESS);
 		if( !job.getStatus().equals(JobStatus.COMPLETED) ) {
@@ -462,7 +462,7 @@ public class ModzyClient {
 	 * @throws ApiException if there is something wrong with the services or the call
 	 */
 	public JobOutput<JsonNode> submitJobBlockUntilComplete(Model model, ModelVersion modelVersion, JobInput<?> jobInput ) throws ApiException{
-		Job job = this.jobClient.submitJob(model, modelVersion, jobInput);
+		Job job = this.jobClient.submitJob(model, modelVersion, jobInput, false);
 		this.logger.info("["+job.getJobIdentifier()+"] "+model.getName()+" :: "+modelVersion.getVersion()+" :: waiting ");
 		job = this.blockUntilNotInJobStatus(job, modelVersion.getTimeout().getStatus(), JobStatus.SUBMITTED);
 		job = this.blockUntilNotInJobStatus(job, modelVersion.getTimeout().getRun(), JobStatus.IN_PROGRESS);
