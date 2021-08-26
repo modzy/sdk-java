@@ -10,8 +10,8 @@ Please review first that the issue is fully related with this SDK by checking th
 
 ### Info
 
-* Modzy SDK version:
-* Python version:
+* Java SDK version:
+* Java version:
 * Operating System:
 
 ### Description
