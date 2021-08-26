@@ -1,5 +1,6 @@
 package com.modzy.sdk;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.modzy.sdk.model.JobInput;
 import com.modzy.sdk.model.JobInputEmbedded;
 import com.modzy.sdk.model.JobInputJDBC;
 import com.modzy.sdk.model.JobInputS3;
+import com.modzy.sdk.model.JobInputStream;
 import com.modzy.sdk.model.JobInputText;
 import com.modzy.sdk.model.JobOutput;
 import com.modzy.sdk.model.JobStatus;
@@ -263,6 +265,45 @@ public class ModzyClient {
 		jobInput.addSource(embeddedSource);
 		return this.submitJob(model, modelVersion, jobInput, false);
 	}
+
+	/**
+	 *
+	 * Create a new job for the model at the last version with the input streams provided,
+	 * this method try to match the streamSource values with the inputs of the specific version
+	 * of the model.
+	 *
+	 * @param modelId the model id string
+	 * @param streamSource the source(s) of the model
+	 * @return the updated instance of the Job returned by Modzy API
+	 * @throws ApiException if there is something wrong with the service or the call
+	 */
+	public Job submitJobFile(String modelId, List<InputStream> streamSource) throws ApiException{
+		Model model = this.modelClient.getModel(modelId);
+		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());
+		JobInput<InputStream> jobInput = new JobInputStream(modelVersion);
+		jobInput.addSource(streamSource);
+		return this.submitJob(model, modelVersion, jobInput, false);
+	}
+
+	/**
+	 *
+	 * Create a new job for the model at the specific version with the input streams provided,
+	 * this method try to match the streamSource values with the inputs of the specific version
+	 * of the model.
+	 *
+	 * @param modelId the model id string
+	 * @param versionId version id string
+	 * @param streamSource the source(s) of the model
+	 * @return the updated instance of the Job returned by Modzy API
+	 * @throws ApiException if there is something wrong with the service or the call
+	 */
+	public Job submitJobFile(String modelId, String versionId, List<InputStream> streamSource) throws ApiException{
+		Model model = this.modelClient.getModel(modelId);
+		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, versionId);
+		JobInput<InputStream> jobInput = new JobInputStream(modelVersion);
+		jobInput.addSource(streamSource);
+		return this.submitJob(model, modelVersion, jobInput, false);
+	}
 	
 	/**
 	 * 
@@ -326,7 +367,7 @@ public class ModzyClient {
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJobJDBC(String modelId, String url, String username, String password, String driver, String query ) throws ApiException{
+	public Job submitJobJDBC(String modelId, String url, String username, String password, String driver, String query) throws ApiException{
 		Model model = this.modelClient.getModel(modelId);
 		ModelVersion modelVersion = this.modelClient.getModelVersion(modelId, model.getLatestVersion());			
 		JobInput<String> jobInput = new JobInputJDBC(url, username, password, driver, query);				
