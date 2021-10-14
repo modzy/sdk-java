@@ -177,15 +177,23 @@ public class JobClient {
 				.path(job.getJobIdentifier()).path(inputItemKey).path(dataItemKey)
 				.request(MediaType.MULTIPART_FORM_DATA);
 		builder.header("Authorization", "ApiKey "+this.apiKey);
-		MultiPart data = new MultiPart();
+		BufferedInputStream bis;
+		MultiPart data;
 		byte inputBuffer[] = new byte[chunkSize];
 		int chunkByteCount;
 		try {
-			BufferedInputStream bis = new BufferedInputStream(inputValue, chunkSize);
+			bis = new BufferedInputStream(inputValue, chunkSize);
 			while( (chunkByteCount = bis.read(inputBuffer)) != -1 ){
-				logger.info("Adding input: "+job.getJobIdentifier()+" "+inputItemKey+" "+dataItemKey);
+				logger.info("Adding input: "+job.getJobIdentifier()+" "+inputItemKey+" "+dataItemKey+" ["+chunkByteCount+"]");
+				data = new MultiPart();
 				data.bodyPart( new StreamDataBodyPart("input", new ByteArrayInputStream(inputBuffer, 0, chunkByteCount), dataItemKey) );
 				Response response = builder.post(Entity.entity(data, data.getMediaType()));
+				logger.info("Sleeping: "+job.getJobIdentifier()+" "+inputItemKey+" "+dataItemKey);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				if( response.getStatus() >= 400 ){
 					throw new ApiException("The server respond with a status "+response.getStatus());
 				}
