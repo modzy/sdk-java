@@ -228,10 +228,11 @@ public class JobClient {
 	 * @param model The model instance in which the model will run
 	 * @param modelVersion The specific version of the model
 	 * @param jobInput The inputs of the model to pass to Modzy
+	 * @param explain If the model supports explainability, flag this job to return an explanation of the predictions
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJob(Model model, ModelVersion modelVersion, JobInput<?> jobInput) throws ApiException{
+	public Job submitJob(Model model, ModelVersion modelVersion, JobInput<?> jobInput, Boolean explain) throws ApiException{
 		return this.submitJob( new Job(model, modelVersion, jobInput) );
 	}	
 	
@@ -242,15 +243,16 @@ public class JobClient {
 	 * @param modelId identifier of the model
 	 * @param modelVersionId identifier of the model version 
 	 * @param jobInput the inputs of the model to pass to Modzy
+	 * @param explain If the model supports explainability, flag this job to return an explanation of the predictions
 	 * @return the updated instance of the Job returned by Modzy API
 	 * @throws ApiException if there is something wrong with the service or the call
 	 */
-	public Job submitJob(String modelId, String modelVersionId, JobInput<?> jobInput) throws ApiException{
+	public Job submitJob(String modelId, String modelVersionId, JobInput<?> jobInput, Boolean explain) throws ApiException{
 		Model model = new Model();
 		model.setIdentifier(modelId);
 		ModelVersion modelVersion = new ModelVersion();
 		modelVersion.setVersion(modelVersionId);
-		return this.submitJob( new Job(model, modelVersion, jobInput) );
+		return this.submitJob( new Job(model, modelVersion, jobInput, explain) );
 	}
 	
 	/**

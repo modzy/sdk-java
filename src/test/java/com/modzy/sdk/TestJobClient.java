@@ -81,7 +81,7 @@ public class TestJobClient {
 		jobInput.addSource(sourceMap);
 		Job job = null;
 		try {			
-			job = this.jobClient.submitJob(model, modelVersion, jobInput);
+			job = this.jobClient.submitJob(model, modelVersion, jobInput, false);
 			this.logger.info( job.toString() );
 		} catch (ApiException e) {
 			fail(e.getMessage());
@@ -118,7 +118,7 @@ public class TestJobClient {
 		jobInput.addSource(sourceMap);
 		Job job = null;
 		try {			
-			job = this.jobClient.submitJob(model, modelVersion, jobInput);
+			job = this.jobClient.submitJob(model, modelVersion, jobInput, false);
 			this.logger.info( job.toString() );
 		} catch (ApiException e) {
 			fail(e.getMessage());
@@ -171,7 +171,7 @@ public class TestJobClient {
 		jobInput.addSource(sourceMap);
 		Job job = null;
 		try {			
-			job = this.jobClient.submitJob(model, modelVersion, jobInput);
+			job = this.jobClient.submitJob(model, modelVersion, jobInput, false);
 			this.logger.info( job.toString() );
 		} catch (ApiException e) {
 			fail(e.getMessage());

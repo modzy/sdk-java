@@ -74,7 +74,7 @@ public class TestResultClient {
 		jobInput.addSource(sourceMap);
 		Job job = null;
 		try {			
-			job = this.jobClient.submitJob(model, modelVersion, jobInput);
+			job = this.jobClient.submitJob(model, modelVersion, jobInput, false);
 			this.logger.info( job.toString() );
 		} catch (ApiException e) {
 			fail(e.getMessage());

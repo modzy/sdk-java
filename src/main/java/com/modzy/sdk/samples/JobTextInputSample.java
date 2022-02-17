@@ -90,7 +90,7 @@ public class JobTextInputSample {
 		mapSource.put("a.wrong.key", "This input is wrong!");
 		jobInput.addSource("wrong-key", mapSource);
 		// When you have all your inputs ready, you can use our helper method to submit the job as follows:
-		Job job = modzyClient.submitJob(model, modelVersion, jobInput);
+		Job job = modzyClient.submitJob(model, modelVersion, jobInput, false);
 		// Modzy creates the job and queue for processing. The job object contains all the info that you need to keep track
 		// of the process, the most important being the job_identifier and the job status.
 		System.out.println(String.format("job: %s", job));
